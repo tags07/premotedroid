@@ -6,11 +6,13 @@ import org.pierre.remotedroid.client.app.PRemoteDroid;
 import org.pierre.remotedroid.client.view.ClickView;
 import org.pierre.remotedroid.protocol.action.MouseClickAction;
 
+import android.content.SharedPreferences;
 import android.view.MotionEvent;
 
 public abstract class ControlType
 {
 	protected ControlActivity controlActivity;
+	protected SharedPreferences preferences;
 	
 	private float downX;
 	private float downY;
@@ -26,9 +28,11 @@ public abstract class ControlType
 	{
 		this.controlActivity = controlActivity;
 		
-		this.clickDelay = Long.parseLong(PRemoteDroid.preferences().getString("control_click_delay", null));
-		this.holdDelay = Long.parseLong(PRemoteDroid.preferences().getString("control_hold_delay", null));
-		this.immobileDistance = Float.parseFloat(PRemoteDroid.preferences().getString("control_immobile_distance", null));
+		this.preferences = ((PRemoteDroid) this.controlActivity.getApplication()).getPreferences();
+		
+		this.clickDelay = Long.parseLong(this.preferences.getString("control_click_delay", null));
+		this.holdDelay = Long.parseLong(this.preferences.getString("control_hold_delay", null));
+		this.immobileDistance = Float.parseFloat(this.preferences.getString("control_immobile_distance", null));
 		this.immobileDistance *= this.controlActivity.getResources().getDisplayMetrics().density;
 		
 		this.leftClickView = (ClickView) this.controlActivity.findViewById(R.id.leftClickView);

@@ -25,7 +25,7 @@ public class SettingsActivity extends PreferenceActivity
 	{
 		super.onPause();
 		
-		SharedPreferences preferences = PRemoteDroid.preferences();
+		SharedPreferences preferences = ((PRemoteDroid) this.getApplication()).getPreferences();
 		Editor editor = preferences.edit();
 		
 		for (String s : tabFloatPreferences)

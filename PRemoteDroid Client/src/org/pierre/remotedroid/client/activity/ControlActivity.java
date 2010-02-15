@@ -18,7 +18,7 @@ import org.pierre.remotedroid.protocol.action.ScreenCaptureResponseAction;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences.Editor;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -61,19 +61,7 @@ public class ControlActivity extends Activity implements Runnable
 	{
 		super.onResume();
 		
-		if (PRemoteDroid.preferences().getBoolean("debug_firstRun", true))
-		{
-			Intent intent = new Intent(this, HelpActivity.class);
-			this.startActivity(intent);
-			
-			Editor editor = PRemoteDroid.preferences().edit();
-			editor.putBoolean("debug_firstRun", false);
-			editor.commit();
-		}
-		else
-		{
-			(new Thread(this)).start();
-		}
+		(new Thread(this)).start();
 	}
 	
 	protected void onPause()
@@ -88,7 +76,6 @@ public class ControlActivity extends Activity implements Runnable
 			}
 			catch (IOException e)
 			{
-				e.printStackTrace();
 			}
 		}
 	}
@@ -134,15 +121,17 @@ public class ControlActivity extends Activity implements Runnable
 	{
 		try
 		{
-			String server = PRemoteDroid.preferences().getString("connection_server", null);
-			int port = Integer.parseInt(PRemoteDroid.preferences().getString("connection_port", null));
+			SharedPreferences preferences = ((PRemoteDroid) this.getApplication()).getPreferences();
+			
+			String server = preferences.getString("connection_server", null);
+			int port = Integer.parseInt(preferences.getString("connection_port", null));
 			this.connection = new PRemoteDroidConnection(new Socket(server, port));
 			
 			this.showToast(R.string.text_connection_established);
 			
 			try
 			{
-				String password = PRemoteDroid.preferences().getString("connection_password", null);
+				String password = preferences.getString("connection_password", null);
 				this.sendAction(new AuthentificationAction(password));
 				
 				this.controlView.screenCaptureRequest();
@@ -164,8 +153,6 @@ public class ControlActivity extends Activity implements Runnable
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
-			
 			if (this.connection != null)
 			{
 				this.showToast(R.string.text_connection_closed);

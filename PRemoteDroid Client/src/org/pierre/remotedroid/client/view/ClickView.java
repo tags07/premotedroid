@@ -42,7 +42,7 @@ public class ClickView extends Button
 		
 		this.hold = false;
 		
-		this.holdDelay = Long.parseLong(PRemoteDroid.preferences().getString("control_hold_delay", null));
+		this.holdDelay = Long.parseLong(((PRemoteDroid) this.controlActivity.getApplication()).getPreferences().getString("control_hold_delay", null));
 	}
 	
 	public boolean isHold()

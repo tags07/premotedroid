@@ -1,7 +1,6 @@
 package org.pierre.remotedroid.client.control;
 
 import org.pierre.remotedroid.client.activity.ControlActivity;
-import org.pierre.remotedroid.client.app.PRemoteDroid;
 
 import android.view.MotionEvent;
 
@@ -19,9 +18,9 @@ public class TrackpadControl extends ControlType
 	{
 		super(controlActivity);
 		
-		this.sensitivity = Float.parseFloat(PRemoteDroid.preferences().getString("control_trackpad_sensitivity", null));
+		this.sensitivity = Float.parseFloat(this.preferences.getString("control_trackpad_sensitivity", null));
 		this.sensitivity /= this.controlActivity.getResources().getDisplayMetrics().density;
-		this.acceleration = Float.parseFloat(PRemoteDroid.preferences().getString("control_trackpad_acceleration", null));
+		this.acceleration = Float.parseFloat(this.preferences.getString("control_trackpad_acceleration", null));
 	}
 	
 	protected void onTouchMove(MotionEvent event)

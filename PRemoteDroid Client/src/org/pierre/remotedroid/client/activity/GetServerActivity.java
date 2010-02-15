@@ -36,6 +36,7 @@ import org.pierre.remotedroid.client.app.PRemoteDroid;
 import org.pierre.remotedroid.protocol.PRemoteDroidConnection;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.widget.TextView;
@@ -182,7 +183,9 @@ public class GetServerActivity extends Activity implements Runnable, HttpRequest
 	
 	private void configureServerConnection(Socket socket)
 	{
-		Editor editor = PRemoteDroid.preferences().edit();
+		SharedPreferences preferences = ((PRemoteDroid) this.getApplication()).getPreferences();
+		
+		Editor editor = preferences.edit();
 		System.out.println(socket.getInetAddress().getHostAddress());
 		editor.putString("connection_server", socket.getInetAddress().getHostAddress());
 		editor.commit();

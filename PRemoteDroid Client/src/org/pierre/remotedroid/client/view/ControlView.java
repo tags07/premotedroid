@@ -7,6 +7,7 @@ import org.pierre.remotedroid.protocol.action.ScreenCaptureRequestAction;
 import org.pierre.remotedroid.protocol.action.ScreenCaptureResponseAction;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.AttributeSet;
@@ -86,11 +87,13 @@ public class ControlView extends ImageView implements Runnable
 		
 		if (visibility == VISIBLE)
 		{
-			this.controlType = ControlType.getControl(this.controlActivity, PRemoteDroid.preferences().getString("control_type", "trackpad"));
+			SharedPreferences preferences = ((PRemoteDroid) this.controlActivity.getApplication()).getPreferences();
 			
-			this.screenCaptureEnabled = PRemoteDroid.preferences().getBoolean("screenCapture_enabled", false);
+			this.controlType = ControlType.getControl(this.controlActivity, preferences.getString("control_type", "trackpad"));
 			
-			String format = PRemoteDroid.preferences().getString("screenCapture_format", null);
+			this.screenCaptureEnabled = preferences.getBoolean("screenCapture_enabled", false);
+			
+			String format = preferences.getString("screenCapture_format", null);
 			if (format.equals("png"))
 			{
 				this.screenCaptureFormat = ScreenCaptureRequestAction.FORMAT_PNG;
