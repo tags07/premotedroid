@@ -1,0 +1,54 @@
+<ScrollView
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical">
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textSize="20dp"
+			android:text="@string/text_help_description"
+			android:textStyle="bold" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:text="@string/text_help_description_content" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textSize="20dp"
+			android:text="@string/text_help_install"
+			android:textStyle="bold" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:text="@string/text_help_install_content_1" />
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/text_get_server"
+			android:id="@+id/getServerButton" />
+		<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/text_settings"
+			android:id="@+id/settingsButton" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:text="@string/text_help_install_content_2" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:textSize="20dp"
+			android:text="@string/text_help_usage"
+			android:textStyle="bold" />
+		<TextView
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:text="@string/text_help_usage_content" />
+	</LinearLayout>
+</ScrollView>

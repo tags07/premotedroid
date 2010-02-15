@@ -1,0 +1,96 @@
+<PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory
+		android:title="@string/text_connection">
+		<EditTextPreference
+			android:inputType="text"
+			android:defaultValue="192.168.0.1"
+			android:title="@string/text_server"
+			android:key="connection_server" />
+		<EditTextPreference
+			android:title="@string/text_port"
+			android:defaultValue="64788"
+			android:key="connection_port" />
+		<EditTextPreference
+			android:inputType="textPassword"
+			android:defaultValue="azerty"
+			android:title="@string/text_password"
+			android:key="connection_password" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="@string/text_control">
+		<ListPreference
+			android:title="@string/text_control_type"
+			android:key="control_type"
+			android:entries="@array/control_type_name"
+			android:entryValues="@array/control_type_id"
+			android:defaultValue="touchpad" />
+		<PreferenceScreen
+			android:title="@string/text_touchpad">
+			<PreferenceCategory
+				android:title="@string/text_touchpad">
+				<EditTextPreference
+					android:inputType="numberDecimal"
+					android:defaultValue="0.7"
+					android:title="@string/text_sensitivity"
+					android:key="control_touchpad_sensitivity" />
+				<EditTextPreference
+					android:inputType="numberDecimal"
+					android:defaultValue="1.5"
+					android:title="@string/text_acceleration"
+					android:key="control_touchpad_acceleration" />
+			</PreferenceCategory>
+		</PreferenceScreen>
+		<PreferenceScreen
+			android:title="@string/text_trackpad">
+			<PreferenceCategory
+				android:title="@string/text_trackpad">
+				<EditTextPreference
+					android:inputType="numberDecimal"
+					android:defaultValue="0.05"
+					android:title="@string/text_sensitivity"
+					android:key="control_trackpad_sensitivity" />
+				<EditTextPreference
+					android:inputType="numberDecimal"
+					android:defaultValue="1.5"
+					android:title="@string/text_acceleration"
+					android:key="control_trackpad_acceleration" />
+			</PreferenceCategory>
+		</PreferenceScreen>
+		<EditTextPreference
+			android:inputType="number"
+			android:defaultValue="150"
+			android:title="@string/text_click_delay"
+			android:key="control_click_delay" />
+		<EditTextPreference
+			android:inputType="number"
+			android:defaultValue="500"
+			android:title="@string/text_hold_delay"
+			android:key="control_hold_delay" />
+		<EditTextPreference
+			android:inputType="numberDecimal"
+			android:defaultValue="10"
+			android:title="@string/text_immobile_distance"
+			android:key="control_immobile_distance" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="@string/text_screen_capture">
+		<CheckBoxPreference
+			android:defaultValue="false"
+			android:title="@string/text_enabled"
+			android:key="screenCapture_enabled" />
+		<ListPreference
+			android:title="@string/text_format"
+			android:key="screenCapture_format"
+			android:entries="@array/screenCaptureFormatName"
+			android:entryValues="@array/screenCaptureFormatId"
+			android:defaultValue="png" />
+	</PreferenceCategory>
+	<PreferenceCategory
+		android:title="@string/text_debug">
+		<CheckBoxPreference
+			android:defaultValue="true"
+			android:title="@string/text_first_run"
+			android:key="debug_firstRun" />
+	</PreferenceCategory>
+</PreferenceScreen>
