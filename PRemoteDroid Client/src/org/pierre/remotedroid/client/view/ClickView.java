@@ -6,32 +6,17 @@ import org.pierre.remotedroid.client.app.PRemoteDroid;
 import org.pierre.remotedroid.protocol.action.MouseClickAction;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.view.View;
+import android.widget.Button;
 
-public class ClickView extends View
+public class ClickView extends Button
 {
-	private static Paint paint;
-	
 	private ControlActivity controlActivity;
 	
 	private byte button;
-	private boolean state;
 	private boolean hold;
 	private long holdDelay;
-	
-	static
-	{
-		paint = new Paint();
-		paint.setColor(Color.WHITE);
-		paint.setStyle(Style.STROKE);
-		paint.setStrokeWidth(8);
-	}
 	
 	public ClickView(Context context, AttributeSet attrs)
 	{
@@ -55,21 +40,9 @@ public class ClickView extends View
 				break;
 		}
 		
-		this.state = MouseClickAction.STATE_UP;
-		
 		this.hold = false;
 		
 		this.holdDelay = Long.parseLong(PRemoteDroid.preferences().getString("control_hold_delay", null));
-	}
-	
-	public boolean getState()
-	{
-		return state;
-	}
-	
-	public void setState(boolean state)
-	{
-		this.state = state;
 	}
 	
 	public boolean isHold()
@@ -80,20 +53,6 @@ public class ClickView extends View
 	public void setHold(boolean hold)
 	{
 		this.hold = hold;
-	}
-	
-	protected void onDraw(Canvas canvas)
-	{
-		super.onDraw(canvas);
-		
-		if (this.state == MouseClickAction.STATE_UP)
-		{
-			canvas.drawRect(0, 0, this.getWidth(), this.getHeight(), paint);
-		}
-		else if (this.state == MouseClickAction.STATE_DOWN)
-		{
-			canvas.drawPaint(paint);
-		}
 	}
 	
 	public boolean onTouchEvent(MotionEvent event)
@@ -133,9 +92,7 @@ public class ClickView extends View
 		{
 			this.controlActivity.mouseClick(this.button, MouseClickAction.STATE_DOWN);
 			
-			this.state = MouseClickAction.STATE_DOWN;
-			
-			this.postInvalidate();
+			this.setPressed(true);
 			
 			this.controlActivity.vibrate(50);
 		}
@@ -161,9 +118,7 @@ public class ClickView extends View
 		{
 			this.controlActivity.mouseClick(this.button, MouseClickAction.STATE_UP);
 			
-			this.state = MouseClickAction.STATE_UP;
-			
-			this.postInvalidate();
+			this.setPressed(false);
 		}
 	}
 }

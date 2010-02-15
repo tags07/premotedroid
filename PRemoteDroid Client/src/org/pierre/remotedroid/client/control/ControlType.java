@@ -99,9 +99,8 @@ public abstract class ControlType
 				
 				this.holdPossible = false;
 				
-				this.leftClickView.setState(MouseClickAction.STATE_DOWN);
+				this.leftClickView.setPressed(true);
 				this.leftClickView.setHold(true);
-				this.leftClickView.postInvalidate();
 				
 				this.controlActivity.vibrate(100);
 			}
@@ -112,22 +111,21 @@ public abstract class ControlType
 	{
 		if (event.getEventTime() - event.getDownTime() < this.clickDelay && this.getDistanceFromDown(event) <= this.immobileDistance)
 		{
-			if (this.leftClickView.getState() == MouseClickAction.STATE_UP)
+			if (this.leftClickView.isPressed())
+			{
+				this.controlActivity.vibrate(100);
+			}
+			else
 			{
 				this.controlActivity.mouseClick(MouseClickAction.BUTTON_LEFT, MouseClickAction.STATE_DOWN);
 				
 				this.controlActivity.vibrate(50);
 			}
-			else if (this.leftClickView.getState() == MouseClickAction.STATE_DOWN)
-			{
-				this.controlActivity.vibrate(100);
-			}
 			
 			this.controlActivity.mouseClick(MouseClickAction.BUTTON_LEFT, MouseClickAction.STATE_UP);
 			
-			this.leftClickView.setState(MouseClickAction.STATE_UP);
+			this.leftClickView.setPressed(false);
 			this.leftClickView.setHold(false);
-			this.leftClickView.postInvalidate();
 		}
 	}
 	
