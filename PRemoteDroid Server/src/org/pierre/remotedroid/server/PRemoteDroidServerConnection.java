@@ -53,10 +53,7 @@ public class PRemoteDroidServerConnection implements Runnable
 				{
 					PRemoteDroidAction action = this.connection.receiveAction();
 					
-					if (action != null)
-					{
-						this.action(action);
-					}
+					this.action(action);
 				}
 			}
 			finally
