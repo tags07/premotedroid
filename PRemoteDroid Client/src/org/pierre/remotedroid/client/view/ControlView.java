@@ -3,6 +3,8 @@ package org.pierre.remotedroid.client.view;
 import org.pierre.remotedroid.client.activity.ControlActivity;
 import org.pierre.remotedroid.client.app.PRemoteDroid;
 import org.pierre.remotedroid.client.control.ControlType;
+import org.pierre.remotedroid.protocol.PRemoteDroidActionReceiver;
+import org.pierre.remotedroid.protocol.action.PRemoteDroidAction;
 import org.pierre.remotedroid.protocol.action.ScreenCaptureRequestAction;
 import org.pierre.remotedroid.protocol.action.ScreenCaptureResponseAction;
 
@@ -14,9 +16,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
-public class ControlView extends ImageView implements Runnable
+public class ControlView extends ImageView implements Runnable, PRemoteDroidActionReceiver
 {
+	private PRemoteDroid application;
 	private ControlActivity controlActivity;
+	private SharedPreferences preferences;
 	
 	private ControlType controlType;
 	
@@ -31,18 +35,27 @@ public class ControlView extends ImageView implements Runnable
 		super(context, attrs);
 		
 		this.controlActivity = (ControlActivity) context;
+		
+		this.application = (PRemoteDroid) this.controlActivity.getApplication();
+		
+		this.preferences = application.getPreferences();
 	}
 	
-	public synchronized void action(ScreenCaptureResponseAction action)
+	public synchronized void receiveAction(PRemoteDroidAction action)
 	{
-		if (this.newBitmap != null)
+		if (action instanceof ScreenCaptureResponseAction)
 		{
-			this.newBitmap.recycle();
+			ScreenCaptureResponseAction scra = (ScreenCaptureResponseAction) action;
+			
+			if (this.newBitmap != null)
+			{
+				this.newBitmap.recycle();
+			}
+			
+			this.newBitmap = BitmapFactory.decodeByteArray(scra.data, 0, scra.data.length);
+			
+			this.post(this);
 		}
-		
-		this.newBitmap = BitmapFactory.decodeByteArray(action.data, 0, action.data.length);
-		
-		this.post(this);
 	}
 	
 	public synchronized void run()
@@ -72,28 +85,19 @@ public class ControlView extends ImageView implements Runnable
 		return true;
 	}
 	
-	public boolean onTrackballEvent(MotionEvent event)
-	{
-		this.controlType.onTrackballEvent(event);
-		
-		event.recycle();
-		
-		return true;
-	}
-	
 	protected void onWindowVisibilityChanged(int visibility)
 	{
 		super.onWindowVisibilityChanged(visibility);
 		
 		if (visibility == VISIBLE)
 		{
-			SharedPreferences preferences = ((PRemoteDroid) this.controlActivity.getApplication()).getPreferences();
+			this.application.registerActionReceiver(this);
 			
-			this.controlType = ControlType.getControl(this.controlActivity, preferences.getString("control_type", "trackpad"));
+			this.controlType = ControlType.getControl(this.controlActivity, this.preferences.getString("control_type", null));
 			
-			this.screenCaptureEnabled = preferences.getBoolean("screenCapture_enabled", false);
+			this.screenCaptureEnabled = this.preferences.getBoolean("screenCapture_enabled", false);
 			
-			String format = preferences.getString("screenCapture_format", null);
+			String format = this.preferences.getString("screenCapture_format", null);
 			if (format.equals("png"))
 			{
 				this.screenCaptureFormat = ScreenCaptureRequestAction.FORMAT_PNG;
@@ -102,6 +106,10 @@ public class ControlView extends ImageView implements Runnable
 			{
 				this.screenCaptureFormat = ScreenCaptureRequestAction.FORMAT_JPG;
 			}
+		}
+		else
+		{
+			this.application.unregisterActionReceiver(this);
 		}
 	}
 	
@@ -124,7 +132,7 @@ public class ControlView extends ImageView implements Runnable
 			
 			if (width != 0 && height != 0)
 			{
-				this.controlActivity.sendAction(new ScreenCaptureRequestAction((short) width, (short) height, this.screenCaptureFormat));
+				this.application.sendAction(new ScreenCaptureRequestAction((short) width, (short) height, this.screenCaptureFormat));
 			}
 		}
 	}

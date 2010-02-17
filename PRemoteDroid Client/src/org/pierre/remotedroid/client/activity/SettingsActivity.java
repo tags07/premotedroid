@@ -25,6 +25,11 @@ public class SettingsActivity extends PreferenceActivity
 	{
 		super.onPause();
 		
+		this.checkPreferences();
+	}
+	
+	private void checkPreferences()
+	{
 		SharedPreferences preferences = ((PRemoteDroid) this.getApplication()).getPreferences();
 		Editor editor = preferences.edit();
 		

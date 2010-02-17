@@ -13,6 +13,7 @@ import android.widget.Button;
 public class ClickView extends Button
 {
 	private ControlActivity controlActivity;
+	private PRemoteDroid application;
 	
 	private byte button;
 	private boolean hold;
@@ -23,6 +24,7 @@ public class ClickView extends Button
 		super(context, attrs);
 		
 		this.controlActivity = (ControlActivity) context;
+		this.application = (PRemoteDroid) this.controlActivity.getApplication();
 		
 		switch (this.getId())
 		{
@@ -42,7 +44,7 @@ public class ClickView extends Button
 		
 		this.hold = false;
 		
-		this.holdDelay = Long.parseLong(((PRemoteDroid) this.controlActivity.getApplication()).getPreferences().getString("control_hold_delay", null));
+		this.holdDelay = Long.parseLong(this.application.getPreferences().getString("control_hold_delay", null));
 	}
 	
 	public boolean isHold()
@@ -94,7 +96,7 @@ public class ClickView extends Button
 			
 			this.setPressed(true);
 			
-			this.controlActivity.vibrate(50);
+			this.application.vibrate(50);
 		}
 		else
 		{
@@ -108,7 +110,7 @@ public class ClickView extends Button
 		{
 			this.hold = true;
 			
-			this.controlActivity.vibrate(100);
+			this.application.vibrate(100);
 		}
 	}
 	

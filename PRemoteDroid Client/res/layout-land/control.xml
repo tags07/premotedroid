@@ -5,7 +5,7 @@
 	android:orientation="horizontal">
 	<view
 		class="org.pierre.remotedroid.client.view.ClickView"
-		android:layout_width="40dip"
+		android:layout_width="50dip"
 		android:layout_height="fill_parent"
 		android:id="@+id/leftClickView" />
 	<view
@@ -16,7 +16,7 @@
 		android:layout_weight="1" />
 	<LinearLayout
 		android:id="@+id/clickLayout"
-		android:layout_width="40dp"
+		android:layout_width="50dp"
 		android:layout_height="fill_parent"
 		android:orientation="vertical">
 		<view

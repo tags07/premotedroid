@@ -2,7 +2,8 @@
 <manifest
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	package="org.pierre.remotedroid.client"
-	android:versionCode="15" android:versionName="2010-02-15">
+	android:versionCode="15"
+	android:versionName="2010-02-15">
 	<uses-sdk
 		android:minSdkVersion="3" />
 	<application
@@ -17,7 +18,9 @@
 					android:name="android.intent.action.MAIN"></action>
 				<category
 					android:name="android.intent.category.LAUNCHER"></category>
-			</intent-filter>
+			
+
+</intent-filter>
 		</activity>
 		<activity
 			android:name=".activity.SettingsActivity"

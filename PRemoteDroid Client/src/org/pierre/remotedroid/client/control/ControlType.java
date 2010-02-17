@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 
 public abstract class ControlType
 {
+	protected PRemoteDroid application;
 	protected ControlActivity controlActivity;
 	protected SharedPreferences preferences;
 	
@@ -28,7 +29,9 @@ public abstract class ControlType
 	{
 		this.controlActivity = controlActivity;
 		
-		this.preferences = ((PRemoteDroid) this.controlActivity.getApplication()).getPreferences();
+		this.application = (PRemoteDroid) this.controlActivity.getApplication();
+		
+		this.preferences = this.application.getPreferences();
 		
 		this.clickDelay = Long.parseLong(this.preferences.getString("control_click_delay", null));
 		this.holdDelay = Long.parseLong(this.preferences.getString("control_hold_delay", null));
@@ -106,7 +109,7 @@ public abstract class ControlType
 				this.leftClickView.setPressed(true);
 				this.leftClickView.setHold(true);
 				
-				this.controlActivity.vibrate(100);
+				this.application.vibrate(100);
 			}
 		}
 	}
@@ -117,29 +120,19 @@ public abstract class ControlType
 		{
 			if (this.leftClickView.isPressed())
 			{
-				this.controlActivity.vibrate(100);
+				this.application.vibrate(100);
 			}
 			else
 			{
 				this.controlActivity.mouseClick(MouseClickAction.BUTTON_LEFT, MouseClickAction.STATE_DOWN);
 				
-				this.controlActivity.vibrate(50);
+				this.application.vibrate(50);
 			}
 			
 			this.controlActivity.mouseClick(MouseClickAction.BUTTON_LEFT, MouseClickAction.STATE_UP);
 			
 			this.leftClickView.setPressed(false);
 			this.leftClickView.setHold(false);
-		}
-	}
-	
-	public void onTrackballEvent(MotionEvent event)
-	{
-		int amount = Math.round(event.getY() * 6);
-		
-		if (amount != 0)
-		{
-			this.controlActivity.mouseWheel(amount);
 		}
 	}
 	

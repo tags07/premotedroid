@@ -1,88 +1,49 @@
 package org.pierre.remotedroid.client.activity;
 
-import java.io.IOException;
-import java.net.Socket;
-
 import org.pierre.remotedroid.client.R;
 import org.pierre.remotedroid.client.app.PRemoteDroid;
-import org.pierre.remotedroid.client.view.ControlView;
-import org.pierre.remotedroid.protocol.PRemoteDroidConnection;
-import org.pierre.remotedroid.protocol.action.AuthentificationAction;
-import org.pierre.remotedroid.protocol.action.AuthentificationResponseAction;
 import org.pierre.remotedroid.protocol.action.MouseClickAction;
 import org.pierre.remotedroid.protocol.action.MouseMoveAction;
 import org.pierre.remotedroid.protocol.action.MouseWheelAction;
-import org.pierre.remotedroid.protocol.action.PRemoteDroidAction;
-import org.pierre.remotedroid.protocol.action.ScreenCaptureResponseAction;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
-public class ControlActivity extends Activity implements Runnable
+public class ControlActivity extends Activity
 {
 	private static final int keyboardMenuItemId = 0;
 	private static final int settingsMenuItemId = 1;
 	private static final int getServerMenuItemId = 2;
 	private static final int helpMenuItemId = 3;
 	
-	private PRemoteDroidConnection connection;
-	private ControlView controlView;
-	private Vibrator vibrator;
+	private PRemoteDroid application;
 	
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		
-		if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-		{
-			this.setContentView(R.layout.control_landscape);
-		}
-		else
-		{
-			this.setContentView(R.layout.control_portrait);
-		}
+		this.setContentView(R.layout.control);
 		
-		this.controlView = (ControlView) this.findViewById(R.id.controlView);
-		
-		this.vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-	}
-	
-	protected void onResume()
-	{
-		super.onResume();
-		
-		(new Thread(this)).start();
-	}
-	
-	protected void onPause()
-	{
-		super.onPause();
-		
-		if (this.connection != null)
-		{
-			try
-			{
-				this.connection.close();
-			}
-			catch (IOException e)
-			{
-			}
-		}
+		this.application = (PRemoteDroid) this.getApplication();
 	}
 	
 	public boolean onTrackballEvent(MotionEvent event)
 	{
-		return this.controlView.onTrackballEvent(event);
+		int amount = Math.round(event.getY() * 6);
+		
+		if (amount != 0)
+		{
+			MouseWheelAction action = new MouseWheelAction((byte) amount);
+			this.application.sendAction(action);
+		}
+		
+		return true;
 	}
 	
 	public boolean onCreateOptionsMenu(Menu menu)
@@ -101,7 +62,7 @@ public class ControlActivity extends Activity implements Runnable
 		{
 			case keyboardMenuItemId:
 				this.toggleKeyboard();
-				this.showToast(R.string.text_keyboard_not_supported);
+				this.application.showToast(R.string.text_keyboard_not_supported);
 				break;
 			case settingsMenuItemId:
 				this.startActivity(new Intent(this, SettingsActivity.class));
@@ -117,126 +78,14 @@ public class ControlActivity extends Activity implements Runnable
 		return super.onOptionsItemSelected(item);
 	}
 	
-	public void run()
+	public void mouseClick(byte button, boolean state)
 	{
-		try
-		{
-			SharedPreferences preferences = ((PRemoteDroid) this.getApplication()).getPreferences();
-			
-			String server = preferences.getString("connection_server", null);
-			int port = Integer.parseInt(preferences.getString("connection_port", null));
-			this.connection = new PRemoteDroidConnection(new Socket(server, port));
-			
-			this.showToast(R.string.text_connection_established);
-			
-			try
-			{
-				String password = preferences.getString("connection_password", null);
-				this.sendAction(new AuthentificationAction(password));
-				
-				this.controlView.screenCaptureRequest();
-				
-				while (true)
-				{
-					PRemoteDroidAction action = this.connection.receiveAction();
-					
-					if (action != null)
-					{
-						this.action(action);
-					}
-				}
-			}
-			finally
-			{
-				this.connection.close();
-			}
-		}
-		catch (IOException e)
-		{
-			if (this.connection != null)
-			{
-				this.showToast(R.string.text_connection_closed);
-			}
-			else
-			{
-				this.showToast(R.string.text_connection_refused);
-			}
-			
-			this.connection = null;
-		}
-	}
-	
-	private void action(PRemoteDroidAction action)
-	{
-		if (action instanceof ScreenCaptureResponseAction)
-		{
-			this.controlView.action((ScreenCaptureResponseAction) action);
-		}
-		else if (action instanceof AuthentificationResponseAction)
-		{
-			this.authentificateResponse((AuthentificationResponseAction) action);
-		}
-	}
-	
-	private void authentificateResponse(AuthentificationResponseAction action)
-	{
-		if (action.authentificated)
-		{
-			this.showToast(R.string.text_authentificated);
-		}
-		else
-		{
-			this.showToast(R.string.text_not_authentificated);
-		}
-	}
-	
-	public void sendAction(PRemoteDroidAction action)
-	{
-		if (this.connection != null)
-		{
-			try
-			{
-				this.connection.sendAction(action);
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-		}
+		this.application.sendAction(new MouseClickAction(button, state));
 	}
 	
 	public void mouseMove(int moveX, int moveY)
 	{
-		MouseMoveAction action = new MouseMoveAction((short) moveX, (short) moveY);
-		this.sendAction(action);
-	}
-	
-	public void mouseClick(byte button, boolean state)
-	{
-		MouseClickAction action = new MouseClickAction(button, state);
-		this.sendAction(action);
-	}
-	
-	public void mouseWheel(int amount)
-	{
-		MouseWheelAction action = new MouseWheelAction((byte) amount);
-		this.sendAction(action);
-	}
-	
-	public void vibrate(long l)
-	{
-		this.vibrator.vibrate(l);
-	}
-	
-	private void showToast(final int resId)
-	{
-		this.controlView.post(new Runnable()
-		{
-			public void run()
-			{
-				Toast.makeText(ControlActivity.this, resId, Toast.LENGTH_SHORT).show();
-			}
-		});
+		this.application.sendAction(new MouseMoveAction((short) moveX, (short) moveY));
 	}
 	
 	private void toggleKeyboard()
