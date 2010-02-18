@@ -94,7 +94,7 @@ public class PRemoteDroidServerTrayIcon
 	
 	public void notifyConnection(InetSocketAddress socketAddress)
 	{
-		this.trayIcon.displayMessage("PRemoteDroid", "New connection : " + socketAddress.getHostString() + ":" + socketAddress.getPort(), MessageType.INFO);
+		this.trayIcon.displayMessage("PRemoteDroid", "New connection : " + socketAddress.getAddress().getHostAddress() + ":" + socketAddress.getPort(), MessageType.INFO);
 	}
 	
 	public void close()
