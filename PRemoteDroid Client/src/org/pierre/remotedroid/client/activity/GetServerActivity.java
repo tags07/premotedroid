@@ -55,9 +55,9 @@ public class GetServerActivity extends Activity implements Runnable, HttpRequest
 		this.setContentView(R.layout.getserver);
 	}
 	
-	protected void onResume()
+	protected void onStart()
 	{
-		super.onResume();
+		super.onStart();
 		
 		try
 		{
@@ -75,9 +75,9 @@ public class GetServerActivity extends Activity implements Runnable, HttpRequest
 		}
 	}
 	
-	protected void onPause()
+	protected void onStop()
 	{
-		super.onPause();
+		super.onStop();
 		
 		try
 		{
@@ -88,7 +88,6 @@ public class GetServerActivity extends Activity implements Runnable, HttpRequest
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
 		}
 	}
 	
@@ -178,7 +177,6 @@ public class GetServerActivity extends Activity implements Runnable, HttpRequest
 				urlView.append("http://" + a.getHostAddress() + ":" + this.serverSocket.getLocalPort() + "\n");
 			}
 		}
-		
 	}
 	
 	private void configureServerConnection(Socket socket)
