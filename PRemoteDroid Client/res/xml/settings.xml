@@ -3,76 +3,76 @@
 	<PreferenceCategory
 		android:title="@string/text_connection">
 		<EditTextPreference
+			android:key="connection_server"
 			android:inputType="text"
 			android:defaultValue="192.168.0.1"
-			android:title="@string/text_server"
-			android:key="connection_server" />
+			android:title="@string/text_server" />
 		<EditTextPreference
+			android:key="connection_port"
 			android:inputType="number"
-			android:title="@string/text_port"
 			android:defaultValue="64788"
-			android:key="connection_port" />
+			android:title="@string/text_port" />
 		<EditTextPreference
+			android:key="connection_password"
 			android:inputType="textPassword"
 			android:defaultValue="azerty"
-			android:title="@string/text_password"
-			android:key="connection_password" />
+			android:title="@string/text_password" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:title="@string/text_control">
 		<EditTextPreference
+			android:key="control_sensitivity"
 			android:inputType="numberDecimal"
 			android:defaultValue="0.7"
-			android:title="@string/text_sensitivity"
-			android:key="control_sensitivity" />
+			android:title="@string/text_sensitivity" />
 		<EditTextPreference
+			android:key="control_acceleration"
 			android:inputType="numberDecimal"
 			android:defaultValue="1.5"
-			android:title="@string/text_acceleration"
-			android:key="control_acceleration" />
+			android:title="@string/text_acceleration" />
 		<EditTextPreference
+			android:key="control_click_delay"
 			android:inputType="number"
 			android:defaultValue="150"
-			android:title="@string/text_click_delay"
-			android:key="control_click_delay" />
+			android:title="@string/text_click_delay" />
 		<EditTextPreference
+			android:key="control_hold_delay"
 			android:inputType="number"
 			android:defaultValue="500"
-			android:title="@string/text_hold_delay"
-			android:key="control_hold_delay" />
+			android:title="@string/text_hold_delay" />
 		<EditTextPreference
+			android:key="control_immobile_distance"
 			android:inputType="numberDecimal"
 			android:defaultValue="10"
-			android:title="@string/text_immobile_distance"
-			android:key="control_immobile_distance" />
+			android:title="@string/text_immobile_distance" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:title="@string/text_screen_capture">
 		<CheckBoxPreference
+			android:key="screenCapture_enabled"
 			android:defaultValue="false"
-			android:title="@string/text_capture_enabled"
-			android:key="screenCapture_enabled" />
+			android:title="@string/text_capture_enabled" />
 		<ListPreference
-			android:title="@string/text_capture_format"
 			android:key="screenCapture_format"
-			android:entries="@array/screenCaptureFormatName"
-			android:entryValues="@array/screenCaptureFormatId"
-			android:defaultValue="png" />
+			android:entries="@array/screenCapture_format_name"
+			android:entryValues="@array/screenCapture_format_id"
+			android:defaultValue="png"
+			android:title="@string/text_capture_format" />
 		<CheckBoxPreference
+			android:key="screenCapture_cursor_enabled"
 			android:defaultValue="true"
-			android:title="@string/text_cursor_enabled"
-			android:key="screenCapture_cursor_enabled" />
+			android:title="@string/text_cursor_enabled" />
 		<EditTextPreference
+			android:key="screenCapture_cursor_size"
 			android:inputType="numberDecimal"
 			android:defaultValue="3"
-			android:title="@string/text_cursor_size"
-			android:key="screenCapture_cursor_size" />
+			android:title="@string/text_cursor_size" />
 	</PreferenceCategory>
 	<PreferenceCategory
 		android:title="@string/text_debug">
 		<CheckBoxPreference
+			android:key="debug_firstRun"
 			android:defaultValue="true"
-			android:title="@string/text_first_run"
-			android:key="debug_firstRun" />
+			android:title="@string/text_first_run" />
 	</PreferenceCategory>
 </PreferenceScreen>

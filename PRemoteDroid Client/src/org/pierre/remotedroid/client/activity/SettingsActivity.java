@@ -38,7 +38,7 @@ public class SettingsActivity extends PreferenceActivity
 	
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		menu.add(Menu.NONE, resetPreferencesMenuItemId, Menu.NONE, this.getResources().getString(R.string.text_reste_preferences));
+		menu.add(Menu.NONE, resetPreferencesMenuItemId, Menu.NONE, this.getResources().getString(R.string.text_reset_preferences));
 		
 		return super.onCreateOptionsMenu(menu);
 	}
