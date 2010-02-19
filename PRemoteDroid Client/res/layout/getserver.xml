@@ -1,23 +1,23 @@
 <ScrollView
+	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	xmlns:android="http://schemas.android.com/apk/res/android">
+	android:layout_height="fill_parent">
 	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:orientation="vertical">
 		<TextView
+			android:text="@string/text_get_server_content_1"
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:text="@string/text_get_server_content_1" />
+			android:layout_height="fill_parent" />
 		<TextView
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
+			android:id="@+id/getServerUrl"
 			android:textSize="20dp"
-			android:id="@+id/getServerUrl" />
-		<TextView
 			android:layout_width="fill_parent"
-			android:layout_height="fill_parent"
-			android:text="@string/text_get_server_content_2" />
+			android:layout_height="fill_parent" />
+		<TextView
+			android:text="@string/text_get_server_content_2"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" />
 	</LinearLayout>
 </ScrollView>

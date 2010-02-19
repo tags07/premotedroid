@@ -5,9 +5,9 @@
 	android:orientation="horizontal">
 	<view
 		class="org.pierre.remotedroid.client.view.ClickView"
+		android:id="@+id/leftClickView"
 		android:layout_width="50dip"
-		android:layout_height="fill_parent"
-		android:id="@+id/leftClickView" />
+		android:layout_height="fill_parent" />
 	<view
 		class="org.pierre.remotedroid.client.view.ControlView"
 		android:id="@+id/controlView"
