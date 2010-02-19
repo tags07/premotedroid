@@ -3,6 +3,8 @@
 	<string
 		name="app_name">PRemoteDroid</string>
 	<string
+		name="app_version">2010-02-19</string>
+	<string
 		name="text_keyboard">Keyboard</string>
 	<string
 		name="text_settings">Settings</string>
