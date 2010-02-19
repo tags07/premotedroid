@@ -10,7 +10,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.util.Enumeration;
 import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
@@ -89,7 +93,29 @@ public class PRemoteDroidServerTrayIcon
 		
 		SystemTray.getSystemTray().add(this.trayIcon);
 		
-		this.trayIcon.displayMessage("PRemoteDroid", "PRemoteDroid server started", TrayIcon.MessageType.INFO);
+		int port = this.preferences.getInt("port", PRemoteDroidConnection.DEFAULT_PORT);
+		
+		StringBuilder message = new StringBuilder("Server started");
+		
+		Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+		while (interfaces.hasMoreElements())
+		{
+			NetworkInterface currentInterface = interfaces.nextElement();
+			
+			Enumeration<InetAddress> addresses = currentInterface.getInetAddresses();
+			
+			while (addresses.hasMoreElements())
+			{
+				InetAddress currentAddress = addresses.nextElement();
+				
+				if (!currentAddress.isLoopbackAddress() && !(currentAddress instanceof Inet6Address))
+				{
+					message.append("\n" + currentAddress.getHostAddress() + ":" + port);
+				}
+			}
+		}
+		
+		this.trayIcon.displayMessage("PRemoteDroid", message.toString(), TrayIcon.MessageType.INFO);
 	}
 	
 	public void notifyConnection(InetSocketAddress socketAddress)
