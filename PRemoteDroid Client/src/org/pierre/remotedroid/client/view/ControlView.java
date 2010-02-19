@@ -12,6 +12,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
@@ -30,6 +33,9 @@ public class ControlView extends ImageView implements Runnable, PRemoteDroidActi
 	private boolean screenCaptureEnabled;
 	private byte screenCaptureFormat;
 	
+	private Paint paint;
+	private float screenDensity;
+	
 	public ControlView(Context context, AttributeSet attrs)
 	{
 		super(context, attrs);
@@ -39,6 +45,12 @@ public class ControlView extends ImageView implements Runnable, PRemoteDroidActi
 		this.application = (PRemoteDroid) this.controlActivity.getApplication();
 		
 		this.preferences = application.getPreferences();
+		
+		this.paint = new Paint();
+		this.paint.setColor(Color.BLACK);
+		this.paint.setAntiAlias(true);
+		
+		this.screenDensity = this.getResources().getDisplayMetrics().density;
 	}
 	
 	public synchronized void receiveAction(PRemoteDroidAction action)
@@ -134,6 +146,16 @@ public class ControlView extends ImageView implements Runnable, PRemoteDroidActi
 			{
 				this.application.sendAction(new ScreenCaptureRequestAction((short) width, (short) height, this.screenCaptureFormat));
 			}
+		}
+	}
+	
+	protected void onDraw(Canvas canvas)
+	{
+		super.onDraw(canvas);
+		
+		if (this.screenCaptureEnabled)
+		{
+			canvas.drawCircle(this.getWidth() / 2, this.getHeight() / 2, 5 * this.screenDensity, this.paint);
 		}
 	}
 }
