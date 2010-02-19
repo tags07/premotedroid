@@ -47,13 +47,11 @@
 	<string
 		name="text_screen_capture">Screen capture</string>
 	<string
-		name="text_format">Format</string>
+		name="text_capture_format">Capture format</string>
 	<string
 		name="text_max_delay">Max delay</string>
 	<string
 		name="text_port">Port</string>
-	<string
-		name="text_enabled">Enabled</string>
 	<string-array
 		name="screenCaptureFormatId">
 		<item>jpg</item>
@@ -64,6 +62,12 @@
 		<item>JPG</item>
 		<item>PNG</item>
 	</string-array>
+	<string
+		name="text_capture_enabled">Capture enabled</string>
+	<string
+		name="text_cursor_enabled">Cursor enabled</string>
+	<string
+		name="text_cursor_size">Cursor size</string>
 	<string
 		name="text_connection_established">Connection established</string>
 	<string
@@ -77,25 +81,11 @@
 	<string
 		name="text_keyboard_not_supported">Keyboard is not supported yet</string>
 	<string
-		name="text_touchpad">Touchpad</string>
-	<string
-		name="text_trackpad">Trackpad</string>
-	<string
-		name="text_control_type">Control type</string>
-	<string-array
-		name="control_type_id">
-		<item>touchpad</item>
-		<item>trackpad</item>
-	</string-array>
-	<string-array
-		name="control_type_name">
-		<item>Touchpad</item>
-		<item>Trackpad</item>
-	</string-array>
-	<string
 		name="text_click_delay">Click delay</string>
 	<string
 		name="text_hold_delay">Hold delay</string>
 	<string
 		name="text_immobile_distance">Immobile distance</string>
+	<string
+		name="text_reste_preferences">Reset preferences</string>
 </resources>

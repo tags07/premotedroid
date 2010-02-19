@@ -8,17 +8,25 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.MenuItem;
 
 public class SettingsActivity extends PreferenceActivity
 {
-	private static String[] tabFloatPreferences = { "control_trackpad_sensitivity", "control_trackpad_acceleration", "control_touchpad_sensitivity", "control_touchpad_acceleration", "control_immobile_distance" };
-	private static String[] tabIntPreferences = { "connection_port", "control_click_delay", "control_hold_delay" };
+	private static final String[] tabFloatPreferences = { "control_sensitivity", "control_acceleration", "control_immobile_distance", "screenCapture_cursor_size" };
+	private static final String[] tabIntPreferences = { "connection_port", "control_click_delay", "control_hold_delay" };
+	
+	private static final int resetPreferencesMenuItemId = 0;
+	
+	private SharedPreferences preferences;
 	
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		
 		this.addPreferencesFromResource(R.xml.settings);
+		
+		this.preferences = ((PRemoteDroid) this.getApplication()).getPreferences();
 	}
 	
 	protected void onPause()
@@ -28,16 +36,34 @@ public class SettingsActivity extends PreferenceActivity
 		this.checkPreferences();
 	}
 	
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		menu.add(Menu.NONE, resetPreferencesMenuItemId, Menu.NONE, this.getResources().getString(R.string.text_reste_preferences));
+		
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case resetPreferencesMenuItemId:
+				this.resetPreferences();
+				break;
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
+	
 	private void checkPreferences()
 	{
-		SharedPreferences preferences = ((PRemoteDroid) this.getApplication()).getPreferences();
-		Editor editor = preferences.edit();
+		Editor editor = this.preferences.edit();
 		
 		for (String s : tabFloatPreferences)
 		{
 			try
 			{
-				Float.parseFloat(preferences.getString(s, null));
+				Float.parseFloat(this.preferences.getString(s, null));
 			}
 			catch (NumberFormatException e)
 			{
@@ -50,7 +76,7 @@ public class SettingsActivity extends PreferenceActivity
 		{
 			try
 			{
-				Integer.parseInt(preferences.getString(s, null));
+				Integer.parseInt(this.preferences.getString(s, null));
 			}
 			catch (NumberFormatException e)
 			{
@@ -60,6 +86,20 @@ public class SettingsActivity extends PreferenceActivity
 		}
 		
 		editor.commit();
+		
 		PreferenceManager.setDefaultValues(this, R.xml.settings, true);
+	}
+	
+	private void resetPreferences()
+	{
+		this.setPreferenceScreen(null);
+		
+		Editor editor = this.preferences.edit();
+		editor.clear();
+		editor.commit();
+		
+		PreferenceManager.setDefaultValues(this, R.xml.settings, true);
+		
+		this.addPreferencesFromResource(R.xml.settings);
 	}
 }
