@@ -1,6 +1,7 @@
 package org.pierre.remotedroid.client.activity;
 
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
@@ -166,15 +167,21 @@ public class GetServerActivity extends Activity implements Runnable, HttpRequest
 		TextView urlView = (TextView) this.findViewById(R.id.getServerUrl);
 		urlView.setText("");
 		
-		Enumeration<NetworkInterface> niEnum = NetworkInterface.getNetworkInterfaces();
-		while (niEnum.hasMoreElements())
+		Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+		while (interfaces.hasMoreElements())
 		{
-			NetworkInterface ni = niEnum.nextElement();
-			InetAddress a = ni.getInetAddresses().nextElement();
+			NetworkInterface currentInterface = interfaces.nextElement();
 			
-			if (!a.equals(InetAddress.getLocalHost()))
+			Enumeration<InetAddress> addresses = currentInterface.getInetAddresses();
+			
+			while (addresses.hasMoreElements())
 			{
-				urlView.append("http://" + a.getHostAddress() + ":" + this.serverSocket.getLocalPort() + "\n");
+				InetAddress currentAddress = addresses.nextElement();
+				
+				if (!currentAddress.isLoopbackAddress() && !(currentAddress instanceof Inet6Address))
+				{
+					urlView.append("http://" + currentAddress.getHostAddress() + ":" + this.serverSocket.getLocalPort() + "\n");
+				}
 			}
 		}
 	}
