@@ -97,6 +97,8 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 		}
 		catch (IOException e)
 		{
+			e.printStackTrace();
+			
 			if (this.connection != null)
 			{
 				this.showToast(R.string.text_connection_closed);
@@ -120,6 +122,7 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 			}
 			catch (IOException e)
 			{
+				e.printStackTrace();
 			}
 		}
 	}
@@ -190,6 +193,7 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 			}
 			catch (IOException e)
 			{
+				e.printStackTrace();
 			}
 		}
 	}

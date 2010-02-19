@@ -89,6 +89,7 @@ public class GetServerActivity extends Activity implements Runnable, HttpRequest
 		}
 		catch (IOException e)
 		{
+			e.printStackTrace();
 		}
 	}
 	
@@ -119,6 +120,7 @@ public class GetServerActivity extends Activity implements Runnable, HttpRequest
 		}
 		catch (IOException e)
 		{
+			e.printStackTrace();
 		}
 	}
 	
