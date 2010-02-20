@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project name="PRemoteDroid Server" default="build">
-	<target name="build" depends="export" />
+	<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="../launch4j/launch4j.jar:../launch4j/lib/xstream.jar" />
+
+	<target name="build" depends="export,windows-exe,windows-exe-debug" />
 
 	<target name="export">
 		<mkdir dir="export" />
@@ -14,12 +16,14 @@
 				<attribute name="Main-Class" value="org.pierre.remotedroid.server.PRemoteDroidServer" />
 			</manifest>
 		</jar>
-		<antcall target="exe" />
 	</target>
 
-	<target name="exe">
-		<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="../launch4j/launch4j.jar:../launch4j/lib/xstream.jar" />
+	<target name="windows-exe">
 		<launch4j configfile="launch4j.xml" />
+	</target>
+
+	<target name="windows-exe-debug">
+		<launch4j configfile="launch4j-debug.xml" />
 	</target>
 
 	<target name="javadoc">
