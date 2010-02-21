@@ -23,14 +23,18 @@ import android.widget.Toast;
 
 public class PRemoteDroid extends Application implements Runnable, PRemoteDroidActionReceiver
 {
+	private static final long CONNECTION_CLOSE_DELAY = 3000;
+	
 	private SharedPreferences preferences;
 	private Vibrator vibrator;
 	
-	private PRemoteDroidConnection connection;
+	private PRemoteDroidConnection[] connection;
 	
 	private ArrayList<PRemoteDroidActionReceiver> actionReceiverList;
 	
 	private Handler handler;
+	
+	private Thread[] scheduleCloseConnectionThread;
 	
 	public void onCreate()
 	{
@@ -55,6 +59,10 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 		this.actionReceiverList = new ArrayList<PRemoteDroidActionReceiver>();
 		
 		this.handler = new Handler();
+		
+		this.connection = new PRemoteDroidConnection[1];
+		
+		this.scheduleCloseConnectionThread = new Thread[1];
 	}
 	
 	public SharedPreferences getPreferences()
@@ -75,7 +83,10 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 			int port = Integer.parseInt(this.preferences.getString("connection_port", null));
 			String password = this.preferences.getString("connection_password", null);
 			
-			this.connection = new PRemoteDroidConnection(new Socket(server, port));
+			synchronized (this.connection)
+			{
+				this.connection[0] = new PRemoteDroidConnection(new Socket(server, port));
+			}
 			
 			this.showToast(R.string.text_connection_established);
 			
@@ -85,57 +96,66 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 				
 				while (true)
 				{
-					PRemoteDroidAction action = this.connection.receiveAction();
+					PRemoteDroidAction action = this.connection[0].receiveAction();
 					
 					this.receiveAction(action);
 				}
 			}
 			finally
 			{
-				this.connection.close();
+				this.connection[0].close();
 			}
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 			
-			if (this.connection != null)
+			synchronized (this.connection)
 			{
-				this.showToast(R.string.text_connection_closed);
-			}
-			else
-			{
-				this.showToast(R.string.text_connection_refused);
+				if (this.connection[0] == null)
+				{
+					this.showToast(R.string.text_connection_refused);
+				}
+				else
+				{
+					this.showToast(R.string.text_connection_closed);
+					this.connection[0] = null;
+				}
 			}
 			
-			this.connection = null;
 		}
 	}
 	
 	public void sendAction(PRemoteDroidAction action)
 	{
-		if (this.connection != null)
+		synchronized (this.connection)
 		{
-			try
+			if (this.connection[0] != null)
 			{
-				this.connection.sendAction(action);
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
+				try
+				{
+					this.connection[0].sendAction(action);
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 	
 	public void showToast(final int resId)
 	{
-		this.handler.post(new Runnable()
+		if (this.actionReceiverList.size() > 0)
 		{
-			public void run()
+			this.handler.post(new Runnable()
 			{
-				Toast.makeText(PRemoteDroid.this, resId, Toast.LENGTH_SHORT).show();
-			}
-		});
+				public void run()
+				{
+					Toast.makeText(PRemoteDroid.this, resId, Toast.LENGTH_SHORT).show();
+				}
+			});
+		}
 	}
 	
 	public void receiveAction(PRemoteDroidAction action)
@@ -157,7 +177,13 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 			
 			if (this.actionReceiverList.size() > 0)
 			{
-				this.startConnection();
+				synchronized (this.connection)
+				{
+					if (this.connection[0] == null)
+					{
+						(new Thread(this)).start();
+					}
+				}
 			}
 		}
 	}
@@ -170,31 +196,59 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 			
 			if (this.actionReceiverList.size() == 0)
 			{
-				this.stopConnection();
+				this.scheduleCloseConnection();
 			}
 		}
 	}
 	
-	public void startConnection()
+	public void scheduleCloseConnection()
 	{
-		(new Thread(this)).start();
-		System.out.println("Start connection");
-	}
-	
-	public void stopConnection()
-	{
-		System.out.println("stop connection");
-		
-		if (this.connection != null)
+		synchronized (this.scheduleCloseConnectionThread)
 		{
-			try
+			if (this.scheduleCloseConnectionThread[0] != null)
 			{
-				this.connection.close();
+				this.scheduleCloseConnectionThread[0].interrupt();
 			}
-			catch (IOException e)
+			
+			this.scheduleCloseConnectionThread[0] = new Thread()
 			{
-				e.printStackTrace();
-			}
+				public void run()
+				{
+					try
+					{
+						synchronized (PRemoteDroid.this.scheduleCloseConnectionThread)
+						{
+							PRemoteDroid.this.scheduleCloseConnectionThread.wait(PRemoteDroid.CONNECTION_CLOSE_DELAY);
+							
+							synchronized (PRemoteDroid.this.connection)
+							{
+								if (PRemoteDroid.this.connection[0] != null)
+								{
+									synchronized (PRemoteDroid.this.actionReceiverList)
+									{
+										if (PRemoteDroid.this.actionReceiverList.size() == 0)
+										{
+											PRemoteDroid.this.connection[0].close();
+										}
+									}
+								}
+							}
+							
+							PRemoteDroid.this.scheduleCloseConnectionThread[0] = null;
+						}
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+					}
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+				}
+			};
+			
+			this.scheduleCloseConnectionThread[0].start();
 		}
 	}
 }
