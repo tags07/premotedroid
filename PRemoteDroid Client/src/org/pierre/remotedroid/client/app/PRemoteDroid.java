@@ -34,7 +34,7 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 	
 	private Handler handler;
 	
-	private Thread[] scheduleCloseConnectionThread;
+	private CloseConnectionScheduler closeConnectionScheduler;
 	
 	public void onCreate()
 	{
@@ -62,7 +62,7 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 		
 		this.connection = new PRemoteDroidConnection[1];
 		
-		this.scheduleCloseConnectionThread = new Thread[1];
+		this.closeConnectionScheduler = new CloseConnectionScheduler();
 	}
 	
 	public SharedPreferences getPreferences()
@@ -196,59 +196,57 @@ public class PRemoteDroid extends Application implements Runnable, PRemoteDroidA
 			
 			if (this.actionReceiverList.size() == 0)
 			{
-				this.scheduleCloseConnection();
+				this.closeConnectionScheduler.schedule();
 			}
 		}
 	}
 	
-	public void scheduleCloseConnection()
+	private class CloseConnectionScheduler implements Runnable
 	{
-		synchronized (this.scheduleCloseConnectionThread)
+		private Thread currentThread;
+		
+		public synchronized void run()
 		{
-			if (this.scheduleCloseConnectionThread[0] != null)
+			try
 			{
-				this.scheduleCloseConnectionThread[0].interrupt();
-			}
-			
-			this.scheduleCloseConnectionThread[0] = new Thread()
-			{
-				public void run()
+				this.wait(PRemoteDroid.CONNECTION_CLOSE_DELAY);
+				
+				synchronized (PRemoteDroid.this.connection)
 				{
-					try
+					if (PRemoteDroid.this.connection[0] != null)
 					{
-						synchronized (PRemoteDroid.this.scheduleCloseConnectionThread)
+						synchronized (PRemoteDroid.this.actionReceiverList)
 						{
-							PRemoteDroid.this.scheduleCloseConnectionThread.wait(PRemoteDroid.CONNECTION_CLOSE_DELAY);
-							
-							synchronized (PRemoteDroid.this.connection)
+							if (PRemoteDroid.this.actionReceiverList.size() == 0)
 							{
-								if (PRemoteDroid.this.connection[0] != null)
-								{
-									synchronized (PRemoteDroid.this.actionReceiverList)
-									{
-										if (PRemoteDroid.this.actionReceiverList.size() == 0)
-										{
-											PRemoteDroid.this.connection[0].close();
-										}
-									}
-								}
+								PRemoteDroid.this.connection[0].close();
 							}
-							
-							PRemoteDroid.this.scheduleCloseConnectionThread[0] = null;
 						}
 					}
-					catch (InterruptedException e)
-					{
-						e.printStackTrace();
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
 				}
-			};
+				
+				this.currentThread = null;
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		public synchronized void schedule()
+		{
+			if (this.currentThread != null)
+			{
+				this.currentThread.interrupt();
+			}
 			
-			this.scheduleCloseConnectionThread[0].start();
+			this.currentThread = new Thread(this);
+			
+			this.currentThread.start();
 		}
 	}
 }
